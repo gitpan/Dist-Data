@@ -25,12 +25,13 @@ my %WriteMakefileArgs = (
     "Archive::Any" => "0.0932",
     "CPAN::Meta" => "2.113640",
     "DateTime::Format::Epoch" => "0.13",
+    "Dist::Metadata" => "0.922",
     "File::Find::Object" => "0.2.3",
     "File::Temp" => "0.22",
     "Module::Extract::Namespaces" => "0.14",
     "Moo" => "0.009013"
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }
