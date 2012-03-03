@@ -31,7 +31,7 @@ my %WriteMakefileArgs = (
     "Module::Extract::Namespaces" => "0.14",
     "Moo" => "0.009013"
   },
-  "VERSION" => "0.002",
+  "VERSION" => "0.003",
   "test" => {
     "TESTS" => "t/*.t"
   }

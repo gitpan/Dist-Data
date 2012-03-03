@@ -3,7 +3,7 @@ BEGIN {
   $Dist::Data::AUTHORITY = 'cpan:GETTY';
 }
 {
-  $Dist::Data::VERSION = '0.002';
+  $Dist::Data::VERSION = '0.003';
 }
 # ABSTRACT: API to access the data of a Perl distribution file or directory
 
@@ -110,6 +110,22 @@ sub _build_files {
 		$files{join('/',@{$_->full_components})} = $_->path if $_->is_file;
 	}
 	return \%files;
+}
+
+has dirs => (
+	is => 'ro',
+	lazy => 1,
+	builder => '_build_dirs',
+);
+
+sub _build_dirs {
+	my ( $self ) = @_;
+	$self->extract_distribution;
+	my %dirs;
+	for ($self->get_directory_tree($self->dist_dir)) {
+		$dirs{join('/',@{$_->full_components})} = $_->path if $_->is_dir;
+	}
+	return \%dirs;
 }
 
 has dist_dir => (
@@ -289,7 +305,7 @@ Dist::Data - API to access the data of a Perl distribution file or directory
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
