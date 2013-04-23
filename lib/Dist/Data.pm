@@ -3,14 +3,14 @@ BEGIN {
   $Dist::Data::AUTHORITY = 'cpan:GETTY';
 }
 {
-  $Dist::Data::VERSION = '0.003';
+  $Dist::Data::VERSION = '0.004';
 }
 # ABSTRACT: API to access the data of a Perl distribution file or directory
 
 use Moo;
 use Archive::Any;
 use CPAN::Meta;
-use File::Temp qw/ tempfile tempdir /;
+use File::Temp;
 use File::Find::Object;
 use Module::Extract::Namespaces;
 use DateTime::Format::Epoch::Unix;
@@ -67,8 +67,6 @@ sub _build_cpan_meta {
 		CPAN::Meta->load_file($self->files->{'META.yml'});
 	} elsif ($self->files->{'META.json'}) {
 		CPAN::Meta->load_file($self->files->{'META.json'});
-	} else {
-		die "no META found";
 	}
 }
 
@@ -136,14 +134,14 @@ has dist_dir => (
 
 sub _build_dist_dir {
 	my ( $self ) = @_;
-	return $self->has_dir ? $self->dir : tempdir;
+	return $self->has_dir ? $self->dir : File::Temp->newdir;
 }
 
 sub extract_distribution {
 	my ( $self ) = @_;
 	return unless $self->has_filename;
 	return if $self->dir_has_dist;
-	my $ext_dir = tempdir;
+	my $ext_dir = File::Temp->newdir;
 	$self->archive->extract($ext_dir);
 	for ($self->get_directory_tree($ext_dir)) {
 		my @components = @{$_->full_components};
@@ -305,7 +303,7 @@ Dist::Data - API to access the data of a Perl distribution file or directory
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -327,7 +325,8 @@ version 0.003
 
   my $filename_of_distini = $dist->file('dist.ini');
 
-  my $cpan_meta = $dist->cpan_meta; # gives back CPAN::Meta
+  # gives back CPAN::Meta if the dist has one
+  my $cpan_meta = $dist->cpan_meta;
   # alternative $dist->cm;
 
   my $version = $dist->version; # handled by CPAN::Meta object
