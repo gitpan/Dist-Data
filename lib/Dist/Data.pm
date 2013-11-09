@@ -3,7 +3,7 @@ BEGIN {
   $Dist::Data::AUTHORITY = 'cpan:GETTY';
 }
 {
-  $Dist::Data::VERSION = '0.004';
+  $Dist::Data::VERSION = '0.005';
 }
 # ABSTRACT: API to access the data of a Perl distribution file or directory
 
@@ -63,10 +63,10 @@ sub distmeta { shift->cpan_meta(@_) }
 
 sub _build_cpan_meta {
 	my ( $self ) = @_;
-	if ($self->files->{'META.yml'}) {
-		CPAN::Meta->load_file($self->files->{'META.yml'});
-	} elsif ($self->files->{'META.json'}) {
+	if ($self->files->{'META.json'}) {
 		CPAN::Meta->load_file($self->files->{'META.json'});
+	} elsif ($self->files->{'META.yml'}) {
+		CPAN::Meta->load_file($self->files->{'META.yml'});
 	}
 }
 
@@ -201,6 +201,7 @@ sub _build_namespaces {
 		if ($key =~ /\.pm$/ || $key =~ /\.pl$/) {
 			my @namespaces = Module::Extract::Namespaces->from_file($self->files->{$key});
 			for (@namespaces) {
+				next unless defined $_;
 				$namespaces{$_} = [] unless defined $namespaces{$_};
 				push @{$namespaces{$_}}, $key;
 			}
@@ -293,8 +294,8 @@ sub BUILDARGS {
 
 1;
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -303,7 +304,7 @@ Dist::Data - API to access the data of a Perl distribution file or directory
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
@@ -372,4 +373,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
